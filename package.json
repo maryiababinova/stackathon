@@ -17,10 +17,17 @@
   },
   "homepage": "https://github.com/mimi-san/stackathon#readme",
   "dependencies": {
+    "chart.js": "^2.8.0",
     "colors": "^1.3.3",
+    "d3": "^5.9.2",
     "dotenv": "^8.0.0",
+    "export-to-csv": "^0.2.1",
+    "franc": "^4.1.0",
     "multilang-sentiment": "^1.2.0",
+    "pg": "^6.4.2",
+    "pg-hstore": "^2.3.3",
     "sentiment": "^5.0.1",
+    "sequelize": "^5.8.11",
     "twit": "^2.2.11",
     "twitter-node-client": "0.0.6"
   }
