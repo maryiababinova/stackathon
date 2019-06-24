@@ -1,7 +1,22 @@
-div.bar {
-    display: inline-block;
-    width: 20px;
-    height: 75px;
-    background-color: teal;
-    margin-right: 2px;
+body { font: 12px Arial;}
+
+path {
+    stroke: #DC143C;
+    stroke-width: 2;
+    fill: none;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: grey;
+    stroke-width: 2;
+    shape-rendering: crispEdges;
+}
+
+h1{
+    font-style: italic;
+    font-size: 3em;
 }

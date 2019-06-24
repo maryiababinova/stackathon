@@ -2,7 +2,7 @@ const Twit = require('twit');
 const dotenv = require('dotenv');
 const sentiment = require('multilang-sentiment');
 const franc = require('franc');
-//const Score = require('./score.js');
+const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 dotenv.config();
 
@@ -23,35 +23,58 @@ const config_twitter = {
 
 let api = new Twit(config_twitter);
 
-let dataset = [];
+let data = [];
+
+const csvWriter = createCsvWriter({
+  path: 'data.csv',
+  header: [
+    { id: 'datetime', title: 'datetime' },
+    { id: 'location', title: 'location' },
+    { id: 'score', title: 'score' },
+    { id: 'words', title: 'words' },
+    { id: 'txt', title: 'txt' },
+  ],
+});
 
 async function getTweets(q, count) {
-  let tweets = await api.get('search/tweets', {
-    q,
-    count,
-    tweet_mode: 'extended',
-  });
+  try {
+    let tweets = await api.get('search/tweets', {
+      q,
+      count,
+      tweet_mode: 'extended',
+    });
 
-  return tweets.data.statuses.map(tweet => {
-    let score;
-    let txt = tweet.retweeted_status
-      ? tweet.retweeted_status.full_text
-      : tweet.full_text
-          .split(/ |\n/)
-          .filter(v => !v.startsWith('http'))
-          .join(' ');
-    console.log('text', txt, 'score', score);
-    if (franc(txt) === 'rus') score = sentiment(txt, 'ru');
-    else score = sentiment(txt, 'en');
-    dataset.push(score.score);
-  });
+    tweets.data.statuses.map(tweet => {
+      let score,
+        date = tweet.created_at.slice(4, 10),
+        time = tweet.created_at.slice(11, -11),
+        location = tweet.retweeted_status
+          ? tweet.retweeted_status.user.location
+          : tweet.user.location,
+        txt = tweet.retweeted_status
+          ? tweet.retweeted_status.full_text
+          : tweet.full_text
+              .split(/ |\n/)
+              .filter(v => !v.startsWith('http'))
+              .join(' ');
+
+      if (franc(txt) === 'rus') score = sentiment(txt, 'ru');
+      else score = sentiment(txt, 'en');
+      data.push({
+        datetime: `${date} 2019 ${time}`,
+        location: `${location}`,
+        score: `${score.score}`,
+        words: `${score.words}`,
+        txt: `${txt}`,
+      });
+      return data;
+    });
+    csvWriter
+      .writeRecords(data)
+      .then(() => console.log('The CSV file was written successfully'));
+  } catch (error) {
+    console.log('oy vey');
+  }
 }
 
-getTweets('fullstack', 5);
-
-d3.select('body')
-  .selectAll('p')
-  .data(dataset)
-  .enter()
-  .append('p')
-  .text(`i'm tired`);
+getTweets('fullstack academy', 180);
