@@ -46,11 +46,10 @@ async function getTweets(q, count) {
 
     tweets.data.statuses.map(tweet => {
       let score,
-        date = tweet.created_at.slice(4, 10),
-        time = tweet.created_at.slice(11, -11),
+        datetime = tweet.created_at,
         location = tweet.retweeted_status
-          ? tweet.retweeted_status.user.location
-          : tweet.user.location,
+          ? tweet.retweeted_status.user.location.replace(`''`, '')
+          : tweet.user.location.replace(`''`, ''),
         txt = tweet.retweeted_status
           ? tweet.retweeted_status.full_text
           : tweet.full_text
@@ -61,7 +60,7 @@ async function getTweets(q, count) {
       if (franc(txt) === 'rus') score = sentiment(txt, 'ru');
       else score = sentiment(txt, 'en');
       data.push({
-        datetime: `${date} 2019 ${time}`,
+        datetime: `${datetime}`,
         location: `${location}`,
         score: `${score.score}`,
         words: `${score.words}`,
@@ -69,6 +68,7 @@ async function getTweets(q, count) {
       });
       return data;
     });
+
     csvWriter
       .writeRecords(data)
       .then(() => console.log('The CSV file was written successfully'));
@@ -77,4 +77,4 @@ async function getTweets(q, count) {
   }
 }
 
-getTweets('fullstack academy', 180);
+getTweets('hong kong', 30);
