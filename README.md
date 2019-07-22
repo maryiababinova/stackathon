@@ -4,6 +4,6 @@ This app uses Twitter API to fetch data for a given search word, writes the twee
 
 #To perform the analysis:
 
-  run npm install
-  enter the search word and the desired number of tweet in index.js
-  run node index.js in your terminal and run live server - your timeseries chart will be dispayed in the local host window
+1. run npm install
+2. enter the search word and the desired number of tweet in index.js
+3. run node index.js in your terminal and run live server - your timeseries chart will be dispayed in the local host window
