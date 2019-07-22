@@ -3,7 +3,7 @@ const margin = { top: 20, right: 20, bottom: 30, left: 50 },
   height = 600 - margin.top - margin.bottom;
 
 // Parse the date / time
-const parseDate = d3.time.format('%b %e %Y %X').parse;
+const parseDate = d3.time.format('%a %b %e %X %Z %Y').parse;
 
 // Set the ranges
 const x = d3.time.scale().range([0, width]);
@@ -55,10 +55,10 @@ d3.csv('data.csv', function(error, data) {
     })
   );
   y.domain([
-    d3.min(data, function(d) {
-      return d.score;
-    }),
-    // -6,
+    // d3.min(data, function(d) {
+    //   return d.score;
+    // }),
+    -6,
     d3.max(data, function(d) {
       return d.score;
     }),
@@ -68,7 +68,12 @@ d3.csv('data.csv', function(error, data) {
   svg
     .append('path')
     .attr('class', 'line')
-    .attr('d', valueline(data));
+    .attr(
+      'd',
+      valueline(data, function(d) {
+        return d;
+      })
+    );
 
   // Add the X Axis
   svg
