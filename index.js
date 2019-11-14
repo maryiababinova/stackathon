@@ -13,6 +13,7 @@ const {
   ACCESS_TOKEN_SECRET,
 } = process.env;
 
+// Twitter API config
 const config_twitter = {
   consumer_key: CONSUMER_KEY,
   consumer_secret: CONSUMER_SECRET,
@@ -25,6 +26,7 @@ let api = new Twit(config_twitter);
 
 let data = [];
 
+// csv file config
 const csvWriter = createCsvWriter({
   path: 'data.csv',
   header: [
@@ -36,6 +38,7 @@ const csvWriter = createCsvWriter({
   ],
 });
 
+// fetching the data from the API
 async function getTweets(q, count) {
   try {
     let tweets = await api.get('search/tweets', {
@@ -44,6 +47,7 @@ async function getTweets(q, count) {
       tweet_mode: 'extended',
     });
 
+    // stardardizing the data
     tweets.data.statuses.map(tweet => {
       let score,
         datetime = tweet.created_at,
@@ -57,6 +61,7 @@ async function getTweets(q, count) {
               .filter(v => !v.startsWith('http'))
               .join(' ');
 
+      // checking the language, performing the sentiment analysis
       if (franc(txt) === 'rus') score = sentiment(txt, 'ru');
       else score = sentiment(txt, 'en');
       data.push({
@@ -69,6 +74,7 @@ async function getTweets(q, count) {
       return data;
     });
 
+    // writing the data into csv
     csvWriter
       .writeRecords(data)
       .then(() => console.log('The CSV file was written successfully'));
@@ -77,4 +83,7 @@ async function getTweets(q, count) {
   }
 }
 
+/* The first parameter is the user-specified keyword, the second parameter is
+the nujmber of requested tweets. The free access limit is 36 tweets.
+*/
 getTweets('hong kong', 30);
